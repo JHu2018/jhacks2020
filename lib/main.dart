@@ -8,10 +8,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Logistic Map',
+        title: 'Logistic Map Simulator',
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Logistic Map'),
+            title: const Text('Logistic Map Simulator'),
           ),
           body: Center(
             child: PopulationSimulation(),

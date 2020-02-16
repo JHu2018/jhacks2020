@@ -13,8 +13,8 @@ class PopulationSimulation extends StatefulWidget {
 /// Population simulator
 class _PopulationSimulationState extends State<PopulationSimulation> {
   final List<List<double>> _progressLog = <List<double>>[[]];
-  double _r = 3.8;
-  double _x0 = 0.0;
+  double _r = 1.0;
+  double _x0 = 0.5;
   bool _isRunning = false;
   int _currIdx = 0;
   final int _iterations = 20;
@@ -22,7 +22,7 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
 
   void initState() {
     super.initState();
-    buildStartProgress(0);
+    buildStartProgress(_x0);
   }
 
   void buildStartProgress(x) {
@@ -30,7 +30,8 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
     final List<double> currProgress = <double>[];
 
     for (var i = 0; i < 10; i++) {
-      currProgress.add(x + gen.nextDouble() * 0.01);
+      final v = x + gen.nextDouble() * 0.01;
+      currProgress.add(max(0, min(1, v)));
     }
 
     _progressLog.clear();
@@ -95,51 +96,56 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
                 )
               : Container(),
           Container(
-          margin: EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text("r:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: 100.0,
-                  maxHeight: 50.0,
-                  minWidth: 100.0,
-                  minHeight: 50.0,
+            margin: EdgeInsets.all(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text("r:",
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 1.5)),
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: 100.0,
+                    maxHeight: 50.0,
+                    minWidth: 100.0,
+                    minHeight: 50.0,
+                  ),
+                  child: TextField(
+                    controller: TextEditingController(text: '$_r'),
+                    onSubmitted: (String value) {
+                      final v = double.tryParse(value);
+                      if (v != null && v <= 4 && v >= 0) {
+                        _r = double.tryParse(value);
+                      }
+                    },
+                  ),
                 ),
-                child: TextField(
-                  controller: TextEditingController(text: '$_r'),
-                  onSubmitted: (String value) {
-                    final v = double.tryParse(value);
-                    if (v != null && v <= 4 && v >= 0){
-                       _r = double.tryParse(value);
-                    }
-                  },
+                Text("x\u2080:",
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 1.5)),
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: 100.0,
+                    maxHeight: 50.0,
+                    minWidth: 100.0,
+                    minHeight: 50.0,
+                  ),
+                  child: TextField(
+                    controller: TextEditingController(text: '$_x0'),
+                    onSubmitted: (String value) {
+                      final v = double.tryParse(value);
+                      if (v != null && v <= 1 && v >= 0) {
+                        _x0 = double.tryParse(value);
+                      }
+                    },
+                  ),
                 ),
-              ),
-              VerticalDivider(color: Color(0xFFD3D3D3), thickness: 5,),
-              Text("x\u2080:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: 100.0,
-                  maxHeight: 50.0,
-                  minWidth: 100.0,
-                  minHeight: 50.0,
-                ),
-                child: TextField(
-                  controller: TextEditingController(text: '$_x0'),
-                  onSubmitted: (String value) {
-                    final v = double.tryParse(value);
-                    if (v != null && v <= 1 && v >= 0){
-                       _x0 = double.tryParse(value);
-                    }
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        RaisedButton(
+          RaisedButton(
             onPressed: () {
               if (!_isRunning) startTimer();
             },
@@ -174,12 +180,10 @@ class _PopulationBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: ListView.builder(
         itemCount: this._progress.length,
         itemBuilder: (context, i) {
-
           final formatter = NumberFormat('0.00');
 
           return Container(
@@ -205,9 +209,4 @@ class _PopulationBars extends StatelessWidget {
       ),
     );
   }
-}
-
-class PopulationControl extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {}
 }
