@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart'; 
+import 'package:quiver/async.dart';
 
 class PopulationSimulation extends StatefulWidget {
   @override
@@ -6,21 +8,50 @@ class PopulationSimulation extends StatefulWidget {
 }
 
 class PopulationSimulationState extends State<PopulationSimulation> {
-  final List<double> progress = <double>[0.2, 0.61, 0.59];
-  double r = 2.4;
+  final List<double> progress = <double>[0.20, 0.201, 0.209, 0.20, 0.20, 0.206, 0.208];
+  double r = 3.7;
+
+  bool _isRunning = false;
+
+  void startTimer() {
+    final int interval = 100;
+    final int iterations = 10;
+
+    CountdownTimer countDownTimer = new CountdownTimer(
+      new Duration(milliseconds: iterations * interval),
+      new Duration(milliseconds: interval),
+    );
+
+    setState(() {
+      _isRunning = true;
+    });
+
+    var sub = countDownTimer.listen(null);
+    sub.onData((duration) {
+      setState(() {
+        for (var i = 0; i < progress.length; i++) {
+          progress[i] = r * progress[i] * (1 - progress[i]);
+        }
+      });
+    });
+
+    sub.onDone(() {
+      setState(() {
+        _isRunning = false;
+      });
+      sub.cancel();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         PopulationBars(progress),
+        Text('$_isRunning'),
         RaisedButton(
           onPressed: () {
-            setState(() {
-              for (var i = 0; i < progress.length; i++) {
-                progress[i] = r * progress[i] * (1 - progress[i]);
-              }
-            });
+            if(!_isRunning) startTimer();
           },
           child: const Text("Click me"),
         ),
@@ -43,7 +74,11 @@ class PopulationBars extends StatelessWidget {
         itemBuilder: (context, i) {
           return Container(
             margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-            child: LinearProgressIndicator(value: this._progress[i].toDouble()),
+            child: LinearProgressIndicator(
+              value: this._progress[i].toDouble(),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green[300]),
+              backgroundColor: Colors.grey[300],
+            ),
           );
         },
       ),
@@ -52,8 +87,6 @@ class PopulationBars extends StatelessWidget {
 }
 
 class PopulationControl extends StatelessWidget {
-
   @override
-  Widget build(BuildContext context){
-  }
+  Widget build(BuildContext context) {}
 }
