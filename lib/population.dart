@@ -99,6 +99,69 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
             },
             child: const Text('Run Simulation'),
           ),
+          Container(
+          margin: EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text("r:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: 150.0,
+                  maxHeight: 50.0,
+                  minWidth: 150.0,
+                  minHeight: 50.0,
+                ),
+                child: TextFormField(
+                  autovalidate: true,
+                  initialValue: "0.0",
+                  textAlign: TextAlign.left,
+                  decoration: InputDecoration(border: OutlineInputBorder()),
+                  validator: (String value){
+                    if (double.tryParse(value) == null){
+                      return "r must be a double";
+                    }else if (double.parse(value) <= 4 && double.parse(value) >= 0){
+                      return null;
+                    }else {
+                      return "r \u2208 [0, 4]";
+                    }
+                  },
+                  onSaved: (String value){
+                    //todo later
+                  },
+                ),
+              ),
+              VerticalDivider(color: Color(0xFFD3D3D3), thickness: 5,),
+              Text("x\u2080:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: 150.0,
+                  maxHeight: 50.0,
+                  minWidth: 150.0,
+                  minHeight: 50.0,
+                ),
+                child: TextFormField(
+                  autovalidate: true,
+                  initialValue: "0",
+                  textAlign: TextAlign.left,
+                  decoration: InputDecoration(border: OutlineInputBorder()),
+                  validator: (String value){
+                    if (double.tryParse(value) == null){
+                      return "r must be a double";
+                    }else if (double.parse(value) <= 1 && double.parse(value) >= 0){
+                      return null;
+                    }else {
+                      return "r \u2208 [0, 1]";
+                    }
+                  },
+                  onSaved: (String value){
+                    //todo later
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
         ],
       );
     } else {
