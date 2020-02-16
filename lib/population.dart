@@ -113,7 +113,7 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
                   ),
                   child: TextField(
                     controller: TextEditingController(text: '$_r'),
-                    onSubmitted: (String value) {
+                    onChanged: (String value) {
                       final v = double.tryParse(value);
                       if (v != null && v <= 4 && v >= 0) {
                         _r = double.tryParse(value);
@@ -134,7 +134,7 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
                   ),
                   child: TextField(
                     controller: TextEditingController(text: '$_x0'),
-                    onSubmitted: (String value) {
+                    onChanged: (String value) {
                       final v = double.tryParse(value);
                       if (v != null && v <= 1 && v >= 0) {
                         _x0 = double.tryParse(value);
