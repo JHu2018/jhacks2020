@@ -14,6 +14,7 @@ class PopulationSimulation extends StatefulWidget {
 class _PopulationSimulationState extends State<PopulationSimulation> {
   final List<List<double>> _progressLog = <List<double>>[[]];
   double _r = 3.8;
+  double _x0 = 0.0;
   bool _isRunning = false;
   int _currIdx = 0;
   final int _iterations = 20;
@@ -46,7 +47,7 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
 
     setState(() {
       _isRunning = true;
-      buildStartProgress(0.7);
+      buildStartProgress(_x0);
       _currIdx = 0;
     });
 
@@ -93,12 +94,6 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
                   ],
                 )
               : Container(),
-          RaisedButton(
-            onPressed: () {
-              if (!_isRunning) startTimer();
-            },
-            child: const Text('Run Simulation'),
-          ),
           Container(
           margin: EdgeInsets.all(15),
           child: Row(
@@ -107,27 +102,18 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
               Text("r:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
               Container(
                 constraints: BoxConstraints(
-                  maxWidth: 150.0,
+                  maxWidth: 100.0,
                   maxHeight: 50.0,
-                  minWidth: 150.0,
+                  minWidth: 100.0,
                   minHeight: 50.0,
                 ),
-                child: TextFormField(
-                  autovalidate: true,
-                  initialValue: "0.0",
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(border: OutlineInputBorder()),
-                  validator: (String value){
-                    if (double.tryParse(value) == null){
-                      return "r must be a double";
-                    }else if (double.parse(value) <= 4 && double.parse(value) >= 0){
-                      return null;
-                    }else {
-                      return "r \u2208 [0, 4]";
+                child: TextField(
+                  controller: TextEditingController(text: '$_r'),
+                  onSubmitted: (String value) {
+                    final v = double.tryParse(value);
+                    if (v != null && v <= 4 && v >= 0){
+                       _r = double.tryParse(value);
                     }
-                  },
-                  onSaved: (String value){
-                    //todo later
                   },
                 ),
               ),
@@ -135,33 +121,30 @@ class _PopulationSimulationState extends State<PopulationSimulation> {
               Text("x\u2080:", style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
               Container(
                 constraints: BoxConstraints(
-                  maxWidth: 150.0,
+                  maxWidth: 100.0,
                   maxHeight: 50.0,
-                  minWidth: 150.0,
+                  minWidth: 100.0,
                   minHeight: 50.0,
                 ),
-                child: TextFormField(
-                  autovalidate: true,
-                  initialValue: "0",
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(border: OutlineInputBorder()),
-                  validator: (String value){
-                    if (double.tryParse(value) == null){
-                      return "r must be a double";
-                    }else if (double.parse(value) <= 1 && double.parse(value) >= 0){
-                      return null;
-                    }else {
-                      return "r \u2208 [0, 1]";
+                child: TextField(
+                  controller: TextEditingController(text: '$_x0'),
+                  onSubmitted: (String value) {
+                    final v = double.tryParse(value);
+                    if (v != null && v <= 1 && v >= 0){
+                       _x0 = double.tryParse(value);
                     }
-                  },
-                  onSaved: (String value){
-                    //todo later
                   },
                 ),
               ),
             ],
           ),
         ),
+        RaisedButton(
+            onPressed: () {
+              if (!_isRunning) startTimer();
+            },
+            child: const Text('Run Simulation'),
+          ),
         ],
       );
     } else {
@@ -197,7 +180,7 @@ class _PopulationBars extends StatelessWidget {
         itemCount: this._progress.length,
         itemBuilder: (context, i) {
 
-          final formatter = NumberFormat('00%');
+          final formatter = NumberFormat('0.00');
 
           return Container(
             margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
